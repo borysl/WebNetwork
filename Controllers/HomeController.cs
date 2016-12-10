@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WebNetwork.ViewModels;
 
 namespace WebNetwork.Controllers
 {
@@ -13,16 +14,16 @@ namespace WebNetwork.Controllers
             return View();
         }
 
-        public IActionResult About()
+        public IActionResult Sigma()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "Use Sigma.js package.";
 
-            return View();
+            return View(new MapSource());
         }
 
-        public IActionResult Contact()
+        public IActionResult Homebrew()
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "Use handcrafted solution.";
 
             return View();
         }
