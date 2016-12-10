@@ -6,5 +6,23 @@
     Layout = "_Layout";
 }
 
+@section styles {
+    <link rel="stylesheet" href="~/css/homeSigma.css" />
+}
+
+@section scripts {
+    <environment names="Development">
+        <script type="text/javascript" src="~/lib/sigma/sigma.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script type="text/javascript" src="~/lib/sigma/sigma.min.js"></script>
+    </environment>
+    <script type="text/javascript" src="~/js/homeSigma.js"></script>
+}
+
+
 <h2>@ViewBag.Title</h2>
-<div>Here I will depict map @MapSource.Name</div>
+<div id="container" class="row">
+    <div id="graph-container" class="col-lg-9"></div>
+</div>
+
