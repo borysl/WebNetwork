@@ -105,53 +105,6 @@
     function frame() {
         s.refresh();
 
-        if (s.graph.nodes().length) {
-            var w = dom.offsetWidth,
-                h = dom.offsetHeight;
-
-            // The "rescale" middleware modifies the position of the nodes, but we
-            // need here the camera to deal with this. Here is the code:
-            var xMin = Infinity,
-                xMax = -Infinity,
-                yMin = Infinity,
-                yMax = -Infinity,
-                margin = 50,
-                scale;
-
-            s.graph.nodes().forEach(function(n) {
-                xMin = Math.min(n.x, xMin);
-                xMax = Math.max(n.x, xMax);
-                yMin = Math.min(n.y, yMin);
-                yMax = Math.max(n.y, yMax);
-            });
-
-            xMax += margin;
-            xMin -= margin;
-            yMax += margin;
-            yMin -= margin;
-
-            scale = Math.min(
-              w / Math.max(xMax - xMin, 1),
-              h / Math.max(yMax - yMin, 1)
-            );
-
-            c.goTo({
-                x: (xMin + xMax) / 2,
-                y: (yMin + yMax) / 2,
-                ratio: 1 / scale
-            });
-
-            ground.style.top =
-              Math.max(h / 2 - Math.min((yMin + yMax) / 2 * scale, h), 0) + 'px';
-            disc.style.borderRadius = radius * scale;
-            disc.style.width = 2 * radius * scale;
-            disc.style.height = 2 * radius * scale;
-            disc.style.top = mouseY - radius * scale;
-            disc.style.left = mouseX - radius * scale;
-            disc.style.backgroundColor = spaceMode ? '#f99' : '#9cf';
-
-        }
-
         requestAnimationFrame(frame);
     }
 
@@ -209,6 +162,9 @@
                 s.graph.dropNode(n.id);
         });
     }, false);
+
+    dom = document.querySelector('#graph-container canvas:last-child');
+
     dom.addEventListener('mousemove', function(e) {
         mouseX = sigma.utils.getX(e);
         mouseY = sigma.utils.getY(e);
