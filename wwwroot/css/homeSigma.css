@@ -4,3 +4,18 @@
     width: 700px;
     border: 1px solid aquamarine;
 }
+
+#disc {
+    top: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#ground {
+    background: #ccc;
+    top: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

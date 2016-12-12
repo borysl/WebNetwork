@@ -7,9 +7,9 @@
  * the screen, since the graph is given directly to the constructor.
  */
 var i,
-    s,
-    N = 2000,
-    E = 10000,
+    sig,
+    N = 4,
+    E = 6,
     g = {
         nodes: [],
         edges: []
@@ -33,7 +33,21 @@ for (i = 0; i < E; i++)
         color: '#ccc'
     });
 // Instantiate sigma:
-s = new sigma({
+sig = new sigma({
     graph: g,
     container: 'graph-container'
+});
+
+sig.graph.clear();
+sig.graph.read({
+    edges: [
+        { "source": "262", "target": "586", "id": "6432" },
+        { "source": "586", "target": "580", "id": "357" },
+        { "source": "580", "target": "1015", "id": "4376" },
+        { "source": "1015", "target": "262", "id": "5581" }],
+    nodes: [
+        { "label": "Sciences De La Terre", "x": 1412.2230224609375, "y": -2.055976390838623, "id": "262", "color": "rgb(255,204,102)", "size": 8.540210723876953 },
+        { "label": "Champ", "x": -933.5524291992188, "y": 239.07545471191406, "id": "586", "color": "rgb(255,51,51)", "size": 4.0 },
+        { "label": "Chaîne Trophique", "x": 1256.1710205078125, "y": -1671.3907470703125, "id": "580", "color": "rgb(153,255,0)", "size": 4.936610698699951 },
+        { "label": "Kilometre Carre", "x": 173.3579559326172, "y": -567.8416137695312, "id": "1015", "color": "rgb(102,255,102)", "size": 5.103478908538818 }]
 });

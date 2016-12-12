@@ -4,15 +4,25 @@
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
+@section styles {
+    <link rel="stylesheet" href="~/css/homeSigma.css" />
+}
 
-<html>
-<head>
-    <title>Handcrafted solution</title>
-</head>
-<body>
-<div>
-      Here will be a map
+@section scripts {
+    <environment names="Development">
+        <script type="text/javascript" src="~/lib/sigma/sigma.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script type="text/javascript" src="~/lib/sigma/sigma.min.js"></script>
+    </environment>
+    <script type="text/javascript" src="~/js/sample.js"></script>
+}
+
+
+<h2>@ViewBag.Title</h2>
+<div id="container" class="row">
+    <div id="graph-container" class="col-lg-9">
+        <div id="disc"></div>
+        <div id="ground"></div>
+    </div>
 </div>
-</body>
-</html>
