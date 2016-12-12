@@ -24,61 +24,6 @@
 
 
 
-
-    /**
-     * CUSTOM PHYSICS LAYOUT:
-     * **********************
-     */
-    sigma.classes.graph.addMethod('computePhysics', function() {
-        var i,
-            j,
-            l = this.nodesArray.length,
-
-            s,
-            t,
-            dX,
-            dY,
-            d,
-            v;
-
-        for (i = 0; i < l; i++) {
-            s = this.nodesArray[i];
-            s.dX *= inertia;
-            s.dY *= inertia;
-
-            s.dY += gravity;
-
-            for (j = i + 1; j < l; j++) {
-                t = this.nodesArray[j];
-
-                dX = s.x - t.x;
-                dY = s.y - t.y;
-                d = Math.sqrt(dX * dX + dY * dY);
-                v = ((d < 2 * nodeRadius) ? (2 * nodeRadius - d) / d / 2 : 0) -
-                  ((this.allNeighborsIndex[s.id] || {})[t.id] ? springForce * (d - springLength) : 0);
-
-                t.dX -= v * dX;
-                t.dY -= v * dY;
-                s.dX += v * dX;
-                s.dY += v * dY;
-            }
-        }
-
-        for (i = 0; i < l; i++) {
-            s = this.nodesArray[i];
-            s.dX = Math.max(Math.min(s.dX, maxDisplacement), -maxDisplacement);
-            s.dY = Math.max(Math.min(s.dY, maxDisplacement), -maxDisplacement);
-            s.x += s.dX;
-            s.y += s.dY;
-
-            // Collision with the ground:
-            s.y = Math.min(-nodeRadius, s.y);
-        }
-    });
-
-
-
-
     /**
      * CUSTOM RENDERERS:
      * *****************
@@ -255,7 +200,6 @@
     });
 
     function frame() {
-        s.graph.computePhysics();
         s.refresh();
 
         if (s.graph.nodes().length) {
