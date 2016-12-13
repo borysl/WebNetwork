@@ -39,8 +39,8 @@ sig.graph.read({
         { "source": 4, "target": 1, "id": ++eId },
         { "source": 4, "target": 2, "id": ++eId }],
     nodes: [
-        { "label": "Sciences De La Terre", "x": 1000, "y": 0, "id": ++nId, "size": 8.540210723876953 },
-        { "label": "Champ", "x": -1000, "y": 0, "id": ++nId, "size": 4.0 },
+        { "label": "Sciences De La Terre", "x": 0, "y": 0, "id": ++nId, "size": 8.540210723876953 },
+        { "label": "Champ", "x": 0, "y": 1000, "id": ++nId, "size": 4.0 },
         { "label": "Chaîne Trophique", "x": 1000, "y": -1000, "id": ++nId, "size": 4.936610698699951 },
         { "label": "Kilometre Carre", "x": 0, "y": -1000, "id": ++nId, "size": 5.103478908538818 }]
 });

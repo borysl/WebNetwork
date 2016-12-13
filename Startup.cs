@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebNetwork.Models;
+using WebNetwork.ViewModels;
 
 namespace WebNetwork
 {
@@ -35,6 +38,10 @@ namespace WebNetwork
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            Mapper.Initialize(_ => _.CreateMap<Asset, AssetNodeViewModel>()); // .ForMember("Longitude", expression => expression.MapFrom(asset => asset.X))
+
+            services.AddDbContext<NetworkContext>();
 
             services.AddMvc();
         }
