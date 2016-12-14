@@ -6,8 +6,74 @@
  * The simple instance of sigma is enough to make it render the graph on the on
  * the screen, since the graph is given directly to the constructor.
  */
-var i,
-    sig,
+sigma.utils.pkg('sigma.canvas.nodes');
+sigma.canvas.nodes.square = (function () {
+    var _cache = {},
+        _loading = {},
+        _callbacks = {};
+
+    // Return the renderer itself:
+    var renderer = function (node, context, settings) {
+        var args = arguments,
+        prefix = settings('prefix') || '',
+        size = node[prefix + 'size'],
+        color = node.color || settings('defaultNodeColor'),
+        url = node.url;
+
+        // Draw the border:
+        context.beginPath();
+        /*context.arc(
+            node[prefix + 'x'],
+            node[prefix + 'y'],
+            node[prefix + 'size'],
+            0,
+            Math.PI,
+            true
+        );*/
+        context.rect(
+            node[prefix + 'x'] - node[prefix + 'size'],
+            node[prefix + 'y'] - node[prefix + 'size'],
+            2 * node[prefix + 'size'],
+            2 * node[prefix + 'size']
+        );
+        context.fillStyle = node.color || settings('defaultNodeColor');;
+        context.fill();
+
+/*        context.lineWidth = size / 5;
+        context.strokeStyle = node.color || settings('defaultNodeColor');
+        context.stroke();*/
+    };
+
+    // Let's add a public method to cache images, to make it possible to
+    // preload images before the initial rendering:
+    renderer.cache = function (url, callback) {
+        if (callback)
+            _callbacks[url] = callback;
+
+        if (_loading[url])
+            return;
+
+        var img = new Image();
+
+        img.onload = function () {
+            _loading[url] = false;
+            _cache[url] = img;
+
+            if (_callbacks[url]) {
+                _callbacks[url].call(this, img);
+                delete _callbacks[url];
+            }
+        };
+
+        _loading[url] = true;
+        img.src = url;
+    };
+
+    return renderer;
+})();
+
+
+var sig,
     nId = 0,
     eId = 0,
 
@@ -19,7 +85,6 @@ var i,
         nodeRadius = 10,
 // Instantiate sigma:
 sig = new sigma({
-    container: 'graph-container',
     edgeColor: 'default',
     autoRescale: false,
     mouseEnabled: false,
@@ -28,6 +93,10 @@ sig = new sigma({
     edgesPowRatio: 1,
     defaultEdgeColor: '#333',
     defaultNodeColor: '#333',
+    renderer: {
+        container: document.getElementById('graph-container'),
+        type: 'canvas'
+    }
 });
 
 $(function () {
@@ -36,7 +105,6 @@ $(function () {
     $.ajax({
         type: "GET",
         url: serviceURL,
-        data: param = "",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: successFunc,

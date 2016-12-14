@@ -10,6 +10,6 @@ namespace WebNetwork.ViewModels
         public int Id { get; set; }
         public int Source { get; set; }
         public int Target { get; set; }
-        public string Name { get; set; }
+        public string Label { get; set; }
     }
 }

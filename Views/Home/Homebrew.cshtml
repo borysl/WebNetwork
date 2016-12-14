@@ -9,20 +9,65 @@
 }
 
 @section scripts {
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.js"></script>
     <environment names="Development">
         <script type="text/javascript" src="~/lib/sigma/sigma.js"></script>
     </environment>
     <environment names="Staging,Production">
         <script type="text/javascript" src="~/lib/sigma/sigma.min.js"></script>
     </environment>
-    <script type="text/javascript" src="~/js/sample.js"></script>
+    <script type="text/javascript" src="~/js/homeHomebrew.js"></script>
 }
 
 
 <h2>@ViewBag.Title</h2>
-<div id="container" class="row">
-    <div id="graph-container" class="col-lg-9">
-        <div id="disc"></div>
-        <div id="ground"></div>
+<div id="container">
+    <style>
+        #webgl {
+            top: 0;
+            bottom: 50%;
+            left: 0;
+            right: 50%;
+            color: #fff;
+            background: #000;
+            position: absolute;
+        }
+
+        #canvas2 {
+            top: 50%;
+            bottom: 0;
+            left: 0;
+            right: 50%;
+            color: #000;
+            background: #eee;
+            position: absolute;
+        }
+
+        #canvas1 {
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            right: 0;
+            color: #000;
+            background: #fff;
+            position: absolute;
+        }
+
+        .label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+            font-family: sans-serif;
+        }
+    </style>
+    <div id="webgl">
+        <div class="label">WebGL renderer + Camera 1</div>
+    </div>
+    <div id="canvas1">
+        <div class="label">Canvas renderer + Camera 2</div>
+    </div>
+    <div id="canvas2">
+        <div class="label">Canvas renderer + Camera 1</div>
     </div>
 </div>
