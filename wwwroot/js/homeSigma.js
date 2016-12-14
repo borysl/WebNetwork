@@ -30,22 +30,32 @@ sig = new sigma({
     defaultNodeColor: '#333',
 });
 
-sig.graph.clear();
-sig.graph.read({
-    edges: [
-        { "source": 1, "target": 2, "id": ++eId },
-        { "source": 2, "target": 3, "id": ++eId },
-        { "source": 3, "target": 4, "id": ++eId },
-        { "source": 4, "target": 1, "id": ++eId },
-        { "source": 4, "target": 2, "id": ++eId }],
-    nodes: [
-        { "label": "Sciences De La Terre", "x": 0, "y": 0, "id": ++nId, "size": 8.540210723876953 },
-        { "label": "Champ", "x": 0, "y": 1000, "id": ++nId, "size": 4.0 },
-        { "label": "Chaîne Trophique", "x": 1000, "y": -1000, "id": ++nId, "size": 4.936610698699951 },
-        { "label": "Kilometre Carre", "x": 0, "y": -1000, "id": ++nId, "size": 5.103478908538818 }]
+$(function () {
+    var serviceURL = '/network/graph';
+
+    $.ajax({
+        type: "GET",
+        url: serviceURL,
+        data: param = "",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: successFunc,
+        error: errorFunc
+    });
+
+    function successFunc(data, status) {
+        sig.graph.clear();
+
+        sig.graph.read(data);
+
+        sig.refresh();
+    }
+
+    function errorFunc(ex) {
+        alert('error: ' + ex);
+    }
 });
 
-sig.refresh();
 
 var dom = document.querySelector('#graph-container canvas:last-child');
 
@@ -110,8 +120,8 @@ dom.addEventListener('mousewheel', function (e) {
     radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
 }, false);
 document.addEventListener('keydown', function (e) {
-    spaceMode = (e.which == 32) ? true : spaceMode;
+    spaceMode = (e.which === 32) ? true : spaceMode;
 });
 document.addEventListener('keyup', function (e) {
-    spaceMode = e.which == 32 ? false : spaceMode;
+    spaceMode = e.which === 32 ? false : spaceMode;
 });

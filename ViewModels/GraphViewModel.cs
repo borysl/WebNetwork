@@ -16,8 +16,8 @@ namespace WebNetwork.ViewModels
             _servicesVm = servicesVm;
         }
 
-        public IEnumerable<AssetNodeViewModel> Assets => _assetsVm;
+        public IEnumerable<AssetNodeViewModel> Nodes => _assetsVm;
 
-        public IEnumerable<ServiceEdgeViewModel> Services => _servicesVm;
+        public IEnumerable<ServiceEdgeViewModel> Edges => _servicesVm;
     }
 }

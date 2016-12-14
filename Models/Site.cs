@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebNetwork.Models
 {
-    // [Table("sd_site")]
+    [Table("sd_site")]
     public class Site
     {
         [Column("site_id")]

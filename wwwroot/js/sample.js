@@ -45,8 +45,6 @@
         }
     });
     dom = document.querySelector('#graph-container canvas:last-child');
-    disc = document.getElementById('disc');
-    ground = document.getElementById('ground');
     c = s.camera;
 
     // Initialize graph:
@@ -59,7 +57,6 @@
               y: -80,
               dX: 0,
               dY: 0,
-              type: 'goo'
           },
           {
               id: (++nId) + '',
@@ -68,7 +65,6 @@
               y: -100,
               dX: 0,
               dY: 0,
-              type: 'goo'
           },
           {
               id: (++nId) + '',
@@ -77,7 +73,6 @@
               y: -80,
               dX: 0,
               dY: 0,
-              type: 'goo'
           }
         ],
         edges: [
@@ -85,19 +80,16 @@
               id: (++eId) + '',
               source: '1',
               target: '2',
-              type: 'goo'
           },
           {
               id: (++eId) + '',
               source: '1',
               target: '3',
-              type: 'goo'
           },
           {
               id: (++eId) + '',
               source: '2',
               target: '3',
-              type: 'goo'
           }
         ]
     });
@@ -147,7 +139,6 @@
                 y: y + Math.random() / 10,
                 dX: 0,
                 dY: 0,
-                type: 'goo'
             });
 
         neighbors.forEach(function(n) {
@@ -156,7 +147,6 @@
                     id: (++eId) + '',
                     source: id,
                     target: n.id,
-                    type: 'goo'
                 });
             else
                 s.graph.dropNode(n.id);
@@ -176,9 +166,9 @@
         radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
     }, false);
     document.addEventListener('keydown', function(e) {
-        spaceMode = (e.which == 32) ? true : spaceMode;
+        spaceMode = (e.which === 32) ? true : spaceMode;
     });
     document.addEventListener('keyup', function(e) {
-        spaceMode = e.which == 32 ? false : spaceMode;
+        spaceMode = e.which === 32 ? false : spaceMode;
     });
 })();

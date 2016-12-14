@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using WebNetwork.Models;
 using WebNetwork.ViewModels;
 
@@ -39,11 +40,25 @@ namespace WebNetwork
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            Mapper.Initialize(_ => _.CreateMap<Asset, AssetNodeViewModel>()); // .ForMember("Longitude", expression => expression.MapFrom(asset => asset.X))
+            services.AddSingleton(Configuration);
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Asset, AssetNodeViewModel>()
+                    .ForMember("Size", _ => _.Ignore())
+                    .ForMember("X", _ => _.MapFrom(asset => asset.AssetPosition.X))
+                    .ForMember("Y", _ => _.MapFrom(asset => asset.AssetPosition.Y));
+                cfg.CreateMap<Service, ServiceEdgeViewModel>()
+                    .ForMember("Source", _ => _.MapFrom(service => service.InputAssetId))
+                    .ForMember("Target", _ => _.MapFrom(service => service.OutputAssetId));
+            });
+
+            Mapper.Configuration.AssertConfigurationIsValid();
 
             services.AddDbContext<NetworkContext>();
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(_ => _.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
