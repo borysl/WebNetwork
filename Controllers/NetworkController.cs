@@ -98,24 +98,19 @@ namespace WebNetwork.Controllers
 
             var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
 
-            IEnumerable<Service> servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset)
-                .Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id && _.OutputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
-
+            var servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset);
+                //.Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id && _.OutputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
+            
             IEnumerable<Service> servicesFromFrame;
 
             if (rect != null)
             {
-                servicesFromFrame = servicesFromServiceLayer.
-                    Where(
-                        _ =>
-                            (rect.X1 <= _.InputAsset.AssetPosition.X) && (_.InputAsset.AssetPosition.X <= rect.X2) &&
-                            (rect.Y1 <= _.InputAsset.AssetPosition.Y) && (_.InputAsset.AssetPosition.Y <= rect.Y2) &&
-                            (rect.X1 <= _.OutputAsset.AssetPosition.X) && (_.OutputAsset.AssetPosition.X <= rect.X2) &&
-                            (rect.Y1 <= _.OutputAsset.AssetPosition.Y) && (_.OutputAsset.AssetPosition.Y <= rect.Y2));
+                servicesFromFrame = servicesFromServiceLayer
+                    .Where(BuildContainsExpression<Service, Asset>(_ => _.InputAsset, assetsFromFrame));
             }
             else
             {
-                servicesFromFrame = servicesFromServiceLayer;
+                servicesFromFrame = servicesFromServiceLayer.Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
             }
             
             var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(servicesFromFrame);
@@ -123,13 +118,13 @@ namespace WebNetwork.Controllers
             return new GraphViewModel(assetsVm, servicesVm);
         }
 
-        /* TODO: Find way to reuse preselected assets
         static Expression<Func<TElement, bool>> BuildContainsExpression<TElement, TValue>(
-    Expression<Func<TElement, TValue>> valueSelector, IEnumerable<TValue> values)
+            Expression<Func<TElement, TValue>> valueSelector, IEnumerable<TValue> values)
         {
             if (null == valueSelector) { throw new ArgumentNullException("valueSelector"); }
             if (null == values) { throw new ArgumentNullException("values"); }
             ParameterExpression p = valueSelector.Parameters.Single();
+            // p => valueSelector(p) == values[0] || valueSelector(p) == ...
             if (!values.Any())
             {
                 return e => false;
@@ -137,6 +132,6 @@ namespace WebNetwork.Controllers
             var equals = values.Select(value => (Expression)Expression.Equal(valueSelector.Body, Expression.Constant(value, typeof(TValue))));
             var body = equals.Aggregate<Expression>((accumulate, equal) => Expression.Or(accumulate, equal));
             return Expression.Lambda<Func<TElement, bool>>(body, p);
-        }*/
+        }
     }
 }
