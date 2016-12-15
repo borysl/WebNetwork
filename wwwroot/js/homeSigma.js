@@ -72,8 +72,8 @@ sigma.canvas.nodes.square = (function () {
 
 
 var sig,
-    nId = 0,
-    eId = 0,
+    nId = 10000,
+    eId = 10000,
 
         radius = 50,
 
@@ -123,32 +123,14 @@ $(function () {
 });
 
 
+//sig.bind('click', function (e) {
+//    addRandomNode(e.data.x, e.data.y);
+//});
+
 var dom = document.querySelector('#graph-container canvas:last-child');
 
-/**
-     * EVENTS BINDING:
-     * ***************
-     */
-dom.addEventListener('click', function (e) {
-    // Find neighbors:
-    var x,
-        y,
-        p,
-        id,
-        neighbors;
-     
-
-    x = sigma.utils.getX(e) - dom.offsetWidth / 2;
-    y = sigma.utils.getY(e) - dom.offsetHeight / 2;
-
-    console.log(x, y);
-    p = sig.camera.cameraPosition(x, y);
-    x = p.x;
-    y = p.y;
-
-    console.log(x, y);
-
-    neighbors = sig.graph.nodes().filter(function (n) {
+function addRandomNode(x, y) {
+    var neighbors = sig.graph.nodes().filter(function (n) {
         return (Math.sqrt(
           Math.pow(n.x - x, 2) +
           Math.pow(n.y - y, 2)
@@ -162,7 +144,8 @@ dom.addEventListener('click', function (e) {
             x: x + Math.random() / 10,
             y: y + Math.random() / 10,
             dX: 0,
-            dY: 0
+            dY: 0,
+            type: "square"
         });
 
     neighbors.forEach(function (n) {
@@ -177,7 +160,7 @@ dom.addEventListener('click', function (e) {
     });
 
     sig.refresh();
-}, false);
+}
 
 dom.addEventListener('DOMMouseScroll', function (e) {
     radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
