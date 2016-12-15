@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,23 @@ namespace WebNetwork.Controllers
     public class NetworkController : Controller
     {
         private readonly NetworkContext _context;
-        private IConfigurationRoot _config;
+        private readonly IConfigurationRoot _config;
+
+        public class Rect
+        {
+            public Rect(double x1, double y1, double x2, double y2)
+            {
+                X1 = x1;
+                Y1 = y1;
+                X2 = x2;
+                Y2 = y2;
+            }
+
+            public double X1 { get; set; }
+            public double Y1 { get; set; }
+            public double X2 { get; set; }
+            public double Y2 { get; set; }
+        }
 
         public NetworkController(NetworkContext context, IConfigurationRoot config)
         {
@@ -27,6 +44,34 @@ namespace WebNetwork.Controllers
         [HttpGet("graph")]
         public IActionResult GetGraph()
         {
+            try
+            {
+                var graphVm = RetrieveGraph(null);
+                return Ok(graphVm);
+            }
+            catch (Exception)
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpGet("graph/{x1:double}:{y1:double}x{x2:double}:{y2:double}")]
+        public IActionResult GetGraph(double x1, double y1, double x2, double y2)
+        {
+            try
+            {
+                var rect = new Rect(x1, y1, x2, y2);
+                var graphVm = RetrieveGraph(rect);
+                return Ok(graphVm);
+            }
+            catch (Exception)
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        public GraphViewModel RetrieveGraph(Rect rect)
+        {
             IEnumerable<ServiceLayer> serviceLayers = _context.ServiceLayers.ToList();
             var serviceLayer = serviceLayers.Single(_ => _.Name == _config["ServiceLayer"]);
 
@@ -34,20 +79,64 @@ namespace WebNetwork.Controllers
                 _context.Assets.Include(_ => _.AssetPosition)
                     .Include(_ => _.Site);
 
-            IEnumerable<Asset> assetFromServiceLayer = assets
+            var assetFromServiceLayer = assets
                     .Where(_ => _.AssetPosition.ServiceLayerId == serviceLayer.Id);
 
-            IEnumerable<Asset> assetFromFrame = assetFromServiceLayer.
-                Where(_ => (-1000 < _.AssetPosition.X) && (_.AssetPosition.X <= 3000) && (-1000 < _.AssetPosition.Y) && (_.AssetPosition.Y <= 3000));
+            IEnumerable<Asset> assetsFromFrame;
+            if (rect != null)
+            {
+                assetsFromFrame = assetFromServiceLayer.
+                    Where(
+                        _ =>
+                            (rect.X1 <= _.AssetPosition.X) && (_.AssetPosition.X <= rect.X2) &&
+                            (rect.Y1 <= _.AssetPosition.Y) && (_.AssetPosition.Y <= rect.Y2));
+            }
+            else
+            {
+                assetsFromFrame = assetFromServiceLayer;
+            }
 
-            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetFromFrame).ToList();
-            var assetIds = assetsVm.Select(_ => _.Id);
+            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
 
-            IEnumerable<Service> services = _context.Services.ToList();
+            IEnumerable<Service> servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset)
+                .Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id && _.OutputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
 
-            var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(services.Where(_ => assetIds.Contains(_.InputAssetId)));
+            IEnumerable<Service> servicesFromFrame;
 
-            return Ok(new GraphViewModel(assetsVm, servicesVm));
+            if (rect != null)
+            {
+                servicesFromFrame = servicesFromServiceLayer.
+                    Where(
+                        _ =>
+                            (rect.X1 <= _.InputAsset.AssetPosition.X) && (_.InputAsset.AssetPosition.X <= rect.X2) &&
+                            (rect.Y1 <= _.InputAsset.AssetPosition.Y) && (_.InputAsset.AssetPosition.Y <= rect.Y2) &&
+                            (rect.X1 <= _.OutputAsset.AssetPosition.X) && (_.OutputAsset.AssetPosition.X <= rect.X2) &&
+                            (rect.Y1 <= _.OutputAsset.AssetPosition.Y) && (_.OutputAsset.AssetPosition.Y <= rect.Y2));
+            }
+            else
+            {
+                servicesFromFrame = servicesFromServiceLayer;
+            }
+            
+            var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(servicesFromFrame);
+
+            return new GraphViewModel(assetsVm, servicesVm);
         }
+
+        /* TODO: Find way to reuse preselected assets
+        static Expression<Func<TElement, bool>> BuildContainsExpression<TElement, TValue>(
+    Expression<Func<TElement, TValue>> valueSelector, IEnumerable<TValue> values)
+        {
+            if (null == valueSelector) { throw new ArgumentNullException("valueSelector"); }
+            if (null == values) { throw new ArgumentNullException("values"); }
+            ParameterExpression p = valueSelector.Parameters.Single();
+            if (!values.Any())
+            {
+                return e => false;
+            }
+            var equals = values.Select(value => (Expression)Expression.Equal(valueSelector.Body, Expression.Constant(value, typeof(TValue))));
+            var body = equals.Aggregate<Expression>((accumulate, equal) => Expression.Or(accumulate, equal));
+            return Expression.Lambda<Func<TElement, bool>>(body, p);
+        }*/
     }
 }

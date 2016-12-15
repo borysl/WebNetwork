@@ -98,7 +98,7 @@ sig = new sigma({
 });
 
 $(function () {
-    var serviceURL = '/network/graph';
+    var serviceURL = '/network/graph'; //'/400:400x800:800';
 
     $.ajax({
         type: "GET",

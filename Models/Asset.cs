@@ -15,18 +15,6 @@ namespace WebNetwork.Models
         [Column("asset_id")]
         public int Id { get; set; }
 
-        [NotMapped]
-        public double X { get; set; }
-
-        [NotMapped]
-        public double Y { get; set; }
-
-        [NotMapped]
-        public double Latitude { get; set; }
-
-        [NotMapped]
-        public double Longitude { get; set; }
-
         [ForeignKey("Site"), Column("site_id")]
         public int SiteId { get; set; }
 
