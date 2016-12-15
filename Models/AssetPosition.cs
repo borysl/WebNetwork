@@ -10,8 +10,11 @@ namespace WebNetwork.Models
     [Table("ntw_asset_position")]
     public class AssetPosition
     {
+        public virtual Asset Asset { get; set; }
+
         [Key, ForeignKey("Asset"), Column("asset_id")]
         public int AssetId { get; set; }
+
         [Column("service_layer_id")]
         public int ServiceLayerId { get; set; }
         [Column("x")]

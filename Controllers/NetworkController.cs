@@ -37,7 +37,6 @@ namespace WebNetwork.Controllers
 
             foreach (var asset in assets)
             {
-                asset.AssetPosition = assetPositions.Single(_ => _.AssetId == asset.Id);
                 asset.Site = sites.Single(_ => _.Id == asset.SiteId);
             }
 

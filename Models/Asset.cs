@@ -33,7 +33,6 @@ namespace WebNetwork.Models
         [NotMapped]
         public Site Site { get; set; }
 
-        [NotMapped]
-        public AssetPosition AssetPosition { get; set; }
+        public virtual AssetPosition AssetPosition { get; set; }
     }
 }
