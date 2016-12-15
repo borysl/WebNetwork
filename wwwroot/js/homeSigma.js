@@ -97,8 +97,9 @@ sig = new sigma({
     }
 });
 
-$(function () {
-    var serviceURL = '/network/graph'; //'/400:400x800:800';
+function loadGraph(suffix)
+{
+    var serviceURL = '/network/graph' + (suffix ? suffix : "");
 
     $.ajax({
         type: "GET",
@@ -120,57 +121,18 @@ $(function () {
     function errorFunc(ex) {
         alert('error: ' + ex);
     }
-});
-
-
-//sig.bind('click', function (e) {
-//    addRandomNode(e.data.x, e.data.y);
-//});
-
-var dom = document.querySelector('#graph-container canvas:last-child');
-
-function addRandomNode(x, y) {
-    var neighbors = sig.graph.nodes().filter(function (n) {
-        return (Math.sqrt(
-          Math.pow(n.x - x, 2) +
-          Math.pow(n.y - y, 2)
-        ) - n.size) < radius;
-    });
-
-    if (!spaceMode)
-        sig.graph.addNode({
-            id: (id = (++nId) + ''),
-            size: nodeRadius,
-            x: x + Math.random() / 10,
-            y: y + Math.random() / 10,
-            dX: 0,
-            dY: 0,
-            type: "square"
-        });
-
-    neighbors.forEach(function (n) {
-        if (!spaceMode)
-            sig.graph.addEdge({
-                id: (++eId) + '',
-                source: id,
-                target: n.id
-            });
-        else
-            sig.graph.dropNode(n.id);
-    });
-
-    sig.refresh();
 }
+$(function () {
+    loadGraph();
+});
 
-dom.addEventListener('DOMMouseScroll', function (e) {
-    radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
-}, false);
-dom.addEventListener('mousewheel', function (e) {
-    radius *= sigma.utils.getDelta(e) < 0 ? 1 / wheelRatio : wheelRatio;
-}, false);
-document.addEventListener('keydown', function (e) {
-    spaceMode = (e.which === 32) ? true : spaceMode;
-});
-document.addEventListener('keyup', function (e) {
-    spaceMode = e.which === 32 ? false : spaceMode;
-});
+
+var btnReload = document.getElementById("btnReload");
+var txtFilter = document.getElementById("txtFilter");
+
+btnReload.onclick = function (e) {
+    loadGraph(txtFilter.value);
+};
+
+
+
