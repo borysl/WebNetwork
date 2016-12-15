@@ -13,14 +13,11 @@ namespace WebNetwork.Models
         public int Id { get; set; }
         [Column("name")]
         public string Name { get; set; }
-        [Column("input_asset_id")]
+        [ForeignKey("Asset"), Column("input_asset_id")]
         public int InputAssetId { get; set; }
 
-        [ForeignKey("Asset"), Column("input_asset_id")]
-        public int OutputAssetId { get; set; }
         [ForeignKey("Asset"), Column("output_asset_id")]
-        public int ServiceLayerId { get; set; }
-
+        public int OutputAssetId { get; set; }
         
         public virtual Asset InputAsset { get; set; }
         

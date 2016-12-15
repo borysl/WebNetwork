@@ -99,14 +99,14 @@ namespace WebNetwork.Controllers
             var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
 
             var servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset);
-                //.Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id && _.OutputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
             
             IEnumerable<Service> servicesFromFrame;
 
             if (rect != null)
             {
                 servicesFromFrame = servicesFromServiceLayer
-                    .Where(BuildContainsExpression<Service, Asset>(_ => _.InputAsset, assetsFromFrame));
+                    .Where(BuildContainsExpression<Service, Asset>(_ => _.InputAsset, assetsFromFrame))
+                    .Where(BuildContainsExpression<Service, Asset>(_ => _.OutputAsset, assetsFromFrame));
             }
             else
             {
