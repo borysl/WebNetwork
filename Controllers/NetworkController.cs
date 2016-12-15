@@ -98,21 +98,26 @@ namespace WebNetwork.Controllers
 
             var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
 
-            var servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset);
-            
+            IEnumerable<Service> servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset)
+                .Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
+
             IEnumerable<Service> servicesFromFrame;
 
             if (rect != null)
             {
-                servicesFromFrame = servicesFromServiceLayer
-                    .Where(BuildContainsExpression<Service, Asset>(_ => _.InputAsset, assetsFromFrame))
-                    .Where(BuildContainsExpression<Service, Asset>(_ => _.OutputAsset, assetsFromFrame));
+                servicesFromFrame = servicesFromServiceLayer.
+                    Where(
+                        _ =>
+                            (rect.X1 <= _.InputAsset.AssetPosition.X) && (_.InputAsset.AssetPosition.X <= rect.X2) &&
+                            (rect.Y1 <= _.InputAsset.AssetPosition.Y) && (_.InputAsset.AssetPosition.Y <= rect.Y2) &&
+                            (rect.X1 <= _.OutputAsset.AssetPosition.X) && (_.OutputAsset.AssetPosition.X <= rect.X2) &&
+                            (rect.Y1 <= _.OutputAsset.AssetPosition.Y) && (_.OutputAsset.AssetPosition.Y <= rect.Y2));
             }
             else
             {
-                servicesFromFrame = servicesFromServiceLayer.Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
+                servicesFromFrame = servicesFromServiceLayer;
             }
-            
+
             var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(servicesFromFrame);
 
             return new GraphViewModel(assetsVm, servicesVm);

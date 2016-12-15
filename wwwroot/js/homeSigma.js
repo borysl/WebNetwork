@@ -116,7 +116,7 @@ function loadGraph(suffix)
     }
 }
 $(function () {
-    loadGraph();
+    loadGraph(txtFilter.value);
 });
 
 var btnReload = document.getElementById("btnReload");
