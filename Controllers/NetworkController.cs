@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
+
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -96,8 +98,6 @@ namespace WebNetwork.Controllers
                 assetsFromFrame = assetFromServiceLayer;
             }
 
-            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
-
             IEnumerable<Service> servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset)
                 .Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
 
@@ -118,20 +118,10 @@ namespace WebNetwork.Controllers
                 servicesFromFrame = servicesFromServiceLayer;
             }
 
+            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
             var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(servicesFromFrame);
 
             return new GraphViewModel(assetsVm, servicesVm);
-        }
-
-        static Expression<Func<TElement, bool>> BuildContainsExpression<TElement, TValue>(
-            Expression<Func<TElement, TValue>> valueSelector, IEnumerable<TValue> values)
-        {
-            if (null == valueSelector) { throw new ArgumentNullException("valueSelector"); }
-            if (null == values) { throw new ArgumentNullException("values"); }
-            ParameterExpression p = valueSelector.Parameters.Single();
-            var equals = values.Select(value => (Expression)Expression.Equal(valueSelector.Body, Expression.Constant(value, typeof(TValue))));
-            var body = equals.Aggregate<Expression>((accumulate, equal) => Expression.Or(accumulate, equal));
-            return Expression.Lambda<Func<TElement, bool>>(body, p);
         }
     }
 }

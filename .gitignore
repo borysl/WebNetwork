@@ -30,3 +30,4 @@ target/
 bin/
 wwwroot/lib
 .vs/config/applicationhost.config
+.vs/restore.dg
