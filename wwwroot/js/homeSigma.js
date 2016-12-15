@@ -16,23 +16,30 @@ sigma.canvas.nodes.square = (function () {
     var renderer = function (node, context, settings) {
         var prefix = settings('prefix') || '',
             size = node[prefix + 'size'],
-            color = node.color || settings('defaultNodeColor');
+            color = node.color || settings('defaultNodeColor'),
+            roundRadius = size / 2,
+            x = node[prefix + 'x'],
+            y = node[prefix + 'y'];
 
-        // Draw the border:
-        context.beginPath();
+        function rectangle(x, y, size, roundRadius, color) {
+            context.beginPath();
 
-        context.rect(
-            node[prefix + 'x'] - size,
-            node[prefix + 'y'] - size,
-            2 * size,
-            2 * size
-        );
-        context.fillStyle = color;
-        context.fill();
+            context.moveTo(x - size + roundRadius, y - size);
+            context.lineTo(x + size - roundRadius, y - size);
+            context.quadraticCurveTo(x + size, y - size, x + size, y - size + roundRadius);
+            context.lineTo(x + size, y + size - roundRadius);
+            context.quadraticCurveTo(x + size, y + size, x + size - roundRadius, y + size);
+            context.lineTo(x - size + roundRadius, y + size);
+            context.quadraticCurveTo(x - size, y + size, x - size, y + size - roundRadius);
+            context.lineTo(x - size, y - size + roundRadius);
+            context.quadraticCurveTo(x - size, y - size, x - size + roundRadius, y - size);
 
-/*        context.lineWidth = size / 5;
-        context.strokeStyle = node.color || settings('defaultNodeColor');
-        context.stroke();*/
+            context.fillStyle = color;
+            context.fill();
+        }
+
+        rectangle(x, y, size, roundRadius, color);
+        rectangle(x, y, size * .7, roundRadius * .7, "white");
     };
 
     // Let's add a public method to cache images, to make it possible to
