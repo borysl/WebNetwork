@@ -27,11 +27,10 @@ namespace WebNetwork.Models
         [NotMapped]
         public double Longitude { get; set; }
 
-        [Column("site_id")]
+        [ForeignKey("Site"), Column("site_id")]
         public int SiteId { get; set; }
 
-        [NotMapped]
-        public Site Site { get; set; }
+        public virtual Site Site { get; set; }
 
         public virtual AssetPosition AssetPosition { get; set; }
     }

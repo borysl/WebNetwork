@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using WebNetwork.Models;
@@ -26,22 +27,24 @@ namespace WebNetwork.Controllers
         [HttpGet("graph")]
         public IActionResult GetGraph()
         {
-            IEnumerable<Asset> assets = _context.Assets.ToList();
-            IEnumerable<Service> services = _context.Services.ToList();
-            IEnumerable<AssetPosition> assetPositions = _context.AssetPosition.ToList();
             IEnumerable<ServiceLayer> serviceLayers = _context.ServiceLayers.ToList();
-
             var serviceLayer = serviceLayers.Single(_ => _.Name == _config["ServiceLayer"]);
 
-            IEnumerable<Site> sites = _context.Sites.ToList();
+            IEnumerable<Asset> assets =
+                _context.Assets.Include(_ => _.AssetPosition)
+                    .Include(_ => _.Site);
 
-            foreach (var asset in assets)
-            {
-                asset.Site = sites.Single(_ => _.Id == asset.SiteId);
-            }
+            IEnumerable<Asset> assetFromServiceLayer = assets
+                    .Where(_ => _.AssetPosition.ServiceLayerId == serviceLayer.Id);
 
-            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assets.Where(_ => _.AssetPosition.ServiceLayerId == serviceLayer.Id)).ToList();
+            IEnumerable<Asset> assetFromFrame = assetFromServiceLayer.
+                Where(_ => (-1000 < _.AssetPosition.X) && (_.AssetPosition.X <= 3000) && (-1000 < _.AssetPosition.Y) && (_.AssetPosition.Y <= 3000));
+
+            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetFromFrame).ToList();
             var assetIds = assetsVm.Select(_ => _.Id);
+
+            IEnumerable<Service> services = _context.Services.ToList();
+
             var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(services.Where(_ => assetIds.Contains(_.InputAssetId)));
 
             return Ok(new GraphViewModel(assetsVm, servicesVm));
