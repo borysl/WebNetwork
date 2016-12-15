@@ -6,6 +6,7 @@
  * The simple instance of sigma is enough to make it render the graph on the on
  * the screen, since the graph is given directly to the constructor.
  */
+
 sigma.utils.pkg('sigma.canvas.nodes');
 sigma.canvas.nodes.square = (function () {
     var _cache = {},
@@ -70,19 +71,8 @@ sigma.canvas.nodes.square = (function () {
     return renderer;
 })();
 
-
-var sig,
-    nId = 10000,
-    eId = 10000,
-
-        radius = 50,
-
-        spaceMode = false,
-        wheelRatio = 1.1,
-
-        nodeRadius = 10,
 // Instantiate sigma:
-sig = new sigma({
+var sig = new sigma({
     edgeColor: 'default',
     autoRescale: false,
     mouseEnabled: false,
@@ -94,6 +84,9 @@ sig = new sigma({
     renderer: {
         container: document.getElementById('graph-container'),
         type: 'canvas'
+    },
+    settings: {
+        animationsTime: 1000
     }
 });
 
@@ -115,7 +108,7 @@ function loadGraph(suffix)
 
         sig.graph.read(data);
 
-        sig.refresh();
+        sig.refresh(/*{ skipIndexation: true }*/);
     }
 
     function errorFunc(ex) {
@@ -126,13 +119,16 @@ $(function () {
     loadGraph();
 });
 
-
 var btnReload = document.getElementById("btnReload");
 var txtFilter = document.getElementById("txtFilter");
+var btnMagic = document.getElementById("btnMagic");
 
 btnReload.onclick = function (e) {
     loadGraph(txtFilter.value);
 };
 
+btnMagic.onclick = function (e) {
+    //sig.cameraPosition;
+};
 
 
