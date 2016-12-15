@@ -14,29 +14,20 @@ sigma.canvas.nodes.square = (function () {
 
     // Return the renderer itself:
     var renderer = function (node, context, settings) {
-        var args = arguments,
-        prefix = settings('prefix') || '',
-        size = node[prefix + 'size'],
-        color = node.color || settings('defaultNodeColor'),
-        url = node.url;
+        var prefix = settings('prefix') || '',
+            size = node[prefix + 'size'],
+            color = node.color || settings('defaultNodeColor');
 
         // Draw the border:
         context.beginPath();
-        /*context.arc(
-            node[prefix + 'x'],
-            node[prefix + 'y'],
-            node[prefix + 'size'],
-            0,
-            Math.PI,
-            true
-        );*/
+
         context.rect(
-            node[prefix + 'x'] - node[prefix + 'size'],
-            node[prefix + 'y'] - node[prefix + 'size'],
-            2 * node[prefix + 'size'],
-            2 * node[prefix + 'size']
+            node[prefix + 'x'] - size,
+            node[prefix + 'y'] - size,
+            2 * size,
+            2 * size
         );
-        context.fillStyle = node.color || settings('defaultNodeColor');;
+        context.fillStyle = color;
         context.fill();
 
 /*        context.lineWidth = size / 5;
