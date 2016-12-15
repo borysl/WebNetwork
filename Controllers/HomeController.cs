@@ -18,7 +18,7 @@ namespace WebNetwork.Controllers
         {
             ViewData["Message"] = "Use Sigma.js package.";
 
-            return View(new MapSource());
+            return View();
         }
 
         public IActionResult Homebrew()
