@@ -134,6 +134,16 @@ cam.bind('coordinatesUpdated', function(e) {
 });
 
 btnMagic.onclick = function (e) {
+    sigma.misc.animation.camera(
+      sig.camera,
+      {
+          x: 400,
+          y: 400,
+          ratio: 3
+      },
+      { duration: sig.settings('animationsTime') }
+    );
+
     cam.goTo({ x: 400, y: 400, ratio: 3});
 };
 
