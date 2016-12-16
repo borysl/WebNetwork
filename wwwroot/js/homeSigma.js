@@ -90,6 +90,8 @@ var sig = new sigma({
     }
 });
 
+var cam = sig.camera;
+
 function loadGraph(suffix)
 {
     var serviceURL = '/network/graph' + (suffix ? suffix : "");
@@ -127,8 +129,12 @@ btnReload.onclick = function (e) {
     loadGraph(txtFilter.value);
 };
 
+cam.bind('coordinatesUpdated', function(e) {
+    console.log(cam.x, cam.y);
+});
+
 btnMagic.onclick = function (e) {
-    //sig.cameraPosition;
+    cam.goTo({ x: 400, y: 400, ratio: 3});
 };
 
 
