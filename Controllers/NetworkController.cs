@@ -80,21 +80,21 @@ namespace WebNetwork.Controllers
             if (rect != null)
             {
                 assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0, @p1, @p2, @p3, @p4)", 1, rect.X1,
-                    rect.Y1, rect.X2, rect.Y2);
+                    rect.Y1, rect.X2, rect.Y2).ToList();
             }
             else
             {
-                assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0)", 1);
+                assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0)", 1).ToList();
             }
 
             if (rect != null)
             {
                 servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0, @p1, @p2, @p3, @p4)", 1, rect.X1,
-                    rect.Y1, rect.X2, rect.Y2);
+                    rect.Y1, rect.X2, rect.Y2).ToList();
             }
             else
             {
-                servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0)", 1);
+                servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0)", 1).ToList();
             }
 
             return new GraphViewModel(assetsVm, servicesVm);
