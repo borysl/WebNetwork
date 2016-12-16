@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -74,52 +75,27 @@ namespace WebNetwork.Controllers
 
         public GraphViewModel RetrieveGraph(Rect rect)
         {
-            IEnumerable<ServiceLayer> serviceLayers = _context.ServiceLayers.ToList();
-            var serviceLayer = serviceLayers.Single(_ => _.Name == _config["ServiceLayer"]);
-
-            IEnumerable<Asset> assets =
-                _context.Assets.Include(_ => _.AssetPosition)
-                    .Include(_ => _.Site);
-
-            var assetFromServiceLayer = assets
-                    .Where(_ => _.AssetPosition.ServiceLayerId == serviceLayer.Id);
-
-            IEnumerable<Asset> assetsFromFrame;
+            IEnumerable<AssetNodeViewModel> assetsVm;
+            IEnumerable<ServiceEdgeViewModel> servicesVm;
             if (rect != null)
             {
-                assetsFromFrame = assetFromServiceLayer.
-                    Where(
-                        _ =>
-                            (rect.X1 <= _.AssetPosition.X) && (_.AssetPosition.X <= rect.X2) &&
-                            (rect.Y1 <= _.AssetPosition.Y) && (_.AssetPosition.Y <= rect.Y2));
+                assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0, @p1, @p2, @p3, @p4)", 1, rect.X1,
+                    rect.Y1, rect.X2, rect.Y2);
             }
             else
             {
-                assetsFromFrame = assetFromServiceLayer;
+                assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0)", 1);
             }
-
-            IEnumerable<Service> servicesFromServiceLayer = _context.Services.Include(_ => _.InputAsset).Include(_ => _.OutputAsset)
-                .Where(_ => _.InputAsset.AssetPosition.ServiceLayerId == serviceLayer.Id);
-
-            IEnumerable<Service> servicesFromFrame;
 
             if (rect != null)
             {
-                servicesFromFrame = servicesFromServiceLayer.
-                    Where(
-                        _ =>
-                            (rect.X1 <= _.InputAsset.AssetPosition.X) && (_.InputAsset.AssetPosition.X <= rect.X2) &&
-                            (rect.Y1 <= _.InputAsset.AssetPosition.Y) && (_.InputAsset.AssetPosition.Y <= rect.Y2) &&
-                            (rect.X1 <= _.OutputAsset.AssetPosition.X) && (_.OutputAsset.AssetPosition.X <= rect.X2) &&
-                            (rect.Y1 <= _.OutputAsset.AssetPosition.Y) && (_.OutputAsset.AssetPosition.Y <= rect.Y2));
+                servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0, @p1, @p2, @p3, @p4)", 1, rect.X1,
+                    rect.Y1, rect.X2, rect.Y2);
             }
             else
             {
-                servicesFromFrame = servicesFromServiceLayer;
+                servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0)", 1);
             }
-
-            var assetsVm = Mapper.Map<IEnumerable<AssetNodeViewModel>>(assetsFromFrame);
-            var servicesVm = Mapper.Map<IEnumerable<ServiceEdgeViewModel>>(servicesFromFrame);
 
             return new GraphViewModel(assetsVm, servicesVm);
         }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using WebNetwork.ViewModels;
 
 namespace WebNetwork.Models
 {
@@ -16,11 +18,8 @@ namespace WebNetwork.Models
             _config = config;
         }
 
-        public DbSet<Asset> Assets { get; set; }
-        public DbSet<Service> Services { get; set; }
-        public DbSet<ServiceLayer> ServiceLayers { get; set; }
-        public DbSet<Site> Sites { get; set; }
-        public DbSet<AssetPosition> AssetPosition { get; set; }
+        public DbSet<AssetNodeViewModel> Assets { get; set; }
+        public DbSet<ServiceEdgeViewModel> Services { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
