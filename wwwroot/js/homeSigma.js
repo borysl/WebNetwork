@@ -130,7 +130,7 @@ btnReload.onclick = function (e) {
 };
 
 cam.bind('coordinatesUpdated', function(e) {
-    console.log(cam.x, cam.y);
+    // console.log(cam.x, cam.y);
 });
 
 btnMagic.onclick = function (e) {
@@ -139,7 +139,8 @@ btnMagic.onclick = function (e) {
       {
           x: 400,
           y: 400,
-          ratio: 3
+          ratio: 3,
+         // angle: PI / 3
       },
       { duration: sig.settings('animationsTime') }
     );
@@ -148,3 +149,26 @@ btnMagic.onclick = function (e) {
 };
 
 
+
+var dom = document.querySelector('#graph-container canvas:last-child');
+
+/**
+     * EVENTS BINDING:
+     * ***************
+     */
+dom.addEventListener('click',function(e) {
+        var x,
+            y,
+            p,
+
+
+            x = sigma.utils.getX(e);
+        y = sigma.utils.getY(e);
+
+        console.log(x, y);
+        p = cam.cameraPosition(x, y);
+        x = p.x;
+        y = p.y;
+
+        console.log(x, y);
+    });
