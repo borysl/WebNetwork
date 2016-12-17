@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -42,21 +41,8 @@ namespace WebNetwork
 
             services.AddSingleton(Configuration);
 
-            Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<Asset, AssetNodeViewModel>()
-                    .ForMember("Size", _ => _.Ignore())
-                    .ForMember("X", _ => _.MapFrom(asset => asset.AssetPosition.X))
-                    .ForMember("Y", _ => _.MapFrom(asset => asset.AssetPosition.Y))
-                    .ForMember("Label", _ => _.MapFrom(asset => asset.Name))
-                    .ForMember("Type", _ => _.Ignore());
-                cfg.CreateMap<Service, ServiceEdgeViewModel>()
-                    .ForMember("Source", _ => _.MapFrom(service => service.InputAssetId))
-                    .ForMember("Target", _ => _.MapFrom(service => service.OutputAssetId))
-                    .ForMember("Label", _ => _.MapFrom(service => service.Name));
-            });
-
-            Mapper.Configuration.AssertConfigurationIsValid();
+            // Automapper is not used now
+            // Mapper.Configuration.AssertConfigurationIsValid();
 
             services.AddDbContext<NetworkContext>();
 

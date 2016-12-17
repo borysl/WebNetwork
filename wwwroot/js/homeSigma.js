@@ -125,12 +125,12 @@ var dom = document.querySelector('#graph-container canvas:last-child');
      * ***************
      */
 dom.addEventListener('click',function(e) {
-        var x,
-            y,
-            p,
+    var x,
+        y,
+        p;
 
 
-            x = sigma.utils.getX(e);
+        x = sigma.utils.getX(e);
         y = sigma.utils.getY(e);
 
         console.log(x, y);

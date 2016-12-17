@@ -31,3 +31,4 @@ bin/
 wwwroot/lib
 .vs/config/applicationhost.config
 .vs/restore.dg
+project.lock.json
