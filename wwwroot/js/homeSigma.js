@@ -7,14 +7,9 @@
  * the screen, since the graph is given directly to the constructor.
  */
 
-sigma.utils.pkg('sigma.canvas.nodes');
-sigma.canvas.nodes.square = (function () {
-    var _cache = {},
-        _loading = {},
-        _callbacks = {};
-
-    // Return the renderer itself:
-    var renderer = function (node, context, settings) {
+;(function() {
+    sigma.utils.pkg('sigma.canvas.nodes');
+    sigma.canvas.nodes.square = function(node, context, settings) {
         var prefix = settings('prefix') || '',
             size = node[prefix + 'size'],
             color = node.color || settings('defaultNodeColor'),
@@ -41,34 +36,7 @@ sigma.canvas.nodes.square = (function () {
 
         rectangle(x, y, size, roundRadius, color);
         rectangle(x, y, size * .7, roundRadius * .7, "white");
-    };
-
-    // Let's add a public method to cache images, to make it possible to
-    // preload images before the initial rendering:
-    renderer.cache = function (url, callback) {
-        if (callback)
-            _callbacks[url] = callback;
-
-        if (_loading[url])
-            return;
-
-        var img = new Image();
-
-        img.onload = function () {
-            _loading[url] = false;
-            _cache[url] = img;
-
-            if (_callbacks[url]) {
-                _callbacks[url].call(this, img);
-                delete _callbacks[url];
-            }
-        };
-
-        _loading[url] = true;
-        img.src = url;
-    };
-
-    return renderer;
+    }
 })();
 
 // Instantiate sigma:
