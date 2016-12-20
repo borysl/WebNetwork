@@ -41,19 +41,16 @@
 
 // Instantiate sigma:
 var sig = new sigma({
-    edgeColor: 'default',
-    touchEnabled: false,
-    nodesPowRatio: 1,
-    edgesPowRatio: 1,
     renderer: {
         container: document.getElementById('graph-container'),
         type: 'canvas',
     },
     settings: {
         drawEdgeLabels: true,
-        //defaultEdgeColor: 'red', <- doesn't work
+        defaultEdgeColor: 'red',
         defaultNodeColor: 'green',
         autoRescale: false,
+        edgeColor: 'default',
     }
 });
 
