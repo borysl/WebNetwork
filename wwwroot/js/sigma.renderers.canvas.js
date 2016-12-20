@@ -137,7 +137,7 @@
         drawLabels = this.settings(options, 'drawLabels'),
         drawEdgeLabels = this.settings(options, 'drawEdgeLabels'),
         embedSettings = this.settings.embedObjects(options, {
-          prefix: this.options.prefix
+            prefix: this.options.prefix
         });
 
     // Call the resize function:

@@ -51,10 +51,10 @@ var sig = new sigma({
     defaultNodeColor: '#333',
     renderer: {
         container: document.getElementById('graph-container'),
-        type: 'canvas'
+        type: 'canvas',
     },
     settings: {
-        animationsTime: 1000
+        drawEdgeLabels: true,
     }
 });
 
