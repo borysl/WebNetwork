@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.Swagger.Model;
 using WebNetwork.Models;
 using WebNetwork.ViewModels;
 
@@ -47,6 +50,27 @@ namespace WebNetwork
             services.AddDbContext<NetworkContext>();
 
             services.AddSwaggerGen();
+
+            // Add the detail information for the API.
+            services.ConfigureSwaggerGen(options =>
+            {
+                options.SingleApiVersion(new Info
+                {
+                    Version = "v1",
+                    Title = "Web Network API",
+                    Description = "A sample of ASP.NET Core Web Network API",
+                    TermsOfService = "None",
+                    Contact = new Contact { Name = "Some Grid Solutions", Email = "some.grid@gmail.com", Url = "http://www.gegridsolutions.com/" },
+                    License = new License { Name = "Use under LICX", Url = "http://url.com" }
+                });
+
+                //Determine base path for the application.
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+
+                //Set the comments path for the swagger json and ui.
+                var xmlPath = Path.Combine(basePath, "WebNetwork.xml");
+                options.IncludeXmlComments(xmlPath);
+            });
 
             services.AddMvc()
                 .AddJsonOptions(_ => _.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());

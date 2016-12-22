@@ -1,49 +1,52 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-
-
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Configuration;
 using WebNetwork.Models;
 using WebNetwork.ViewModels;
 
 namespace WebNetwork.Controllers
 {
+    /// <summary>
+    /// Network controller that creates 
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Route("network")]
     public class NetworkController : Controller
     {
         private readonly NetworkContext _context;
-        private readonly IConfigurationRoot _config;
 
-        public class Rect
+        private class Rect
         {
-            public Rect(double x1, double y1, double x2, double y2)
+            public Rect(double xTopLeft, double yTopLeft, double xBottomRight, double yBottomRight)
             {
-                X1 = x1;
-                Y1 = y1;
-                X2 = x2;
-                Y2 = y2;
+                XTopLeft = xTopLeft;
+                YTopLeft = yTopLeft;
+                XBottomRight = xBottomRight;
+                YBottomRight = yBottomRight;
             }
 
-            public double X1 { get; set; }
-            public double Y1 { get; set; }
-            public double X2 { get; set; }
-            public double Y2 { get; set; }
+            public double XTopLeft { get; }
+            public double YTopLeft { get; }
+            public double XBottomRight { get; }
+            public double YBottomRight { get; }
         }
 
-        public NetworkController(NetworkContext context, IConfigurationRoot config)
+        /// <summary>
+        /// Instanciate Network controller
+        /// </summary>
+        /// <param name="context">DB context for Network</param>
+        /// <param name="config">Configuration class to fetch settings</param>
+        public NetworkController(NetworkContext context)
         {
             _context = context;
-            _config = config;
         }
 
+        /// <summary>
+        /// Get entire graph with a single call
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("graph")]
         public IActionResult GetGraph()
         {
@@ -58,12 +61,21 @@ namespace WebNetwork.Controllers
             }
         }
 
-        [HttpGet("graph/{x1:double}:{y1:double}x{x2:double}:{y2:double}")]
-        public IActionResult GetGraph(double x1, double y1, double x2, double y2)
+
+        /// <summary>
+        /// Get frame of the network.
+        /// </summary>
+        /// <param name="xTopLeft">Coordinate X of the top left point.</param>
+        /// <param name="yTopLeft">Coordinate Y of the top left point.</param>
+        /// <param name="xBottomRight">Corrdinate X of the bottom right point.</param>
+        /// <param name="yBottomRight">Coordinate Y of the bottom right point.</param>
+        /// <returns></returns>
+        [HttpGet("graph/{xTopLeft:double}:{yTopLeft:double}x{xBottomRight:double}:{yBottomRight:double}")]
+        public IActionResult GetGraph(double xTopLeft, double yTopLeft, double xBottomRight, double yBottomRight)
         {
             try
             {
-                var rect = new Rect(x1, y1, x2, y2);
+                var rect = new Rect(xTopLeft, yTopLeft, xBottomRight, yBottomRight);
                 var graphVm = RetrieveGraph(rect);
                 return Ok(graphVm);
             }
@@ -79,8 +91,8 @@ namespace WebNetwork.Controllers
             IEnumerable<ServiceEdgeViewModel> servicesVm;
             if (rect != null)
             {
-                assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0, @p1, @p2, @p3, @p4)", 1, rect.X1,
-                    rect.Y1, rect.X2, rect.Y2).ToList();
+                assetsVm = _context.Assets.FromSql("select * from get_frame_assets(@p0, @p1, @p2, @p3, @p4)", 1, rect.XTopLeft,
+                    rect.YTopLeft, rect.XBottomRight, rect.YBottomRight).ToList();
             }
             else
             {
@@ -89,8 +101,8 @@ namespace WebNetwork.Controllers
 
             if (rect != null)
             {
-                servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0, @p1, @p2, @p3, @p4)", 1, rect.X1,
-                    rect.Y1, rect.X2, rect.Y2).ToList();
+                servicesVm = _context.Services.FromSql("select * from get_frame_services(@p0, @p1, @p2, @p3, @p4)", 1, rect.XTopLeft,
+                    rect.YTopLeft, rect.XBottomRight, rect.YBottomRight).ToList();
             }
             else
             {
