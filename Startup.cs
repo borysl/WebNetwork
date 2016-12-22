@@ -78,7 +78,7 @@ namespace WebNetwork
 
             app.UseSwagger();
 
-            app.UseSwaggerUi();
+            app.UseSwaggerUi("Home/Documentation");
         }
     }
 }

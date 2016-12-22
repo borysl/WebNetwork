@@ -21,13 +21,6 @@ namespace WebNetwork.Controllers
             return View();
         }
 
-        public IActionResult Homebrew()
-        {
-            ViewData["Message"] = "Use handcrafted solution.";
-
-            return View();
-        }
-
         public IActionResult Error()
         {
             return View();
