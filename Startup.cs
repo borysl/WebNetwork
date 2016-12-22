@@ -46,6 +46,8 @@ namespace WebNetwork
 
             services.AddDbContext<NetworkContext>();
 
+            services.AddSwaggerGen();
+
             services.AddMvc()
                 .AddJsonOptions(_ => _.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
         }
@@ -73,6 +75,10 @@ namespace WebNetwork
             app.UseStaticFiles();
 
             app.UseMvcWithDefaultRoute();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUi();
         }
     }
 }

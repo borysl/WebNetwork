@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
@@ -72,7 +73,7 @@ namespace WebNetwork.Controllers
             }
         }
 
-        public GraphViewModel RetrieveGraph(Rect rect)
+        private GraphViewModel RetrieveGraph(Rect rect)
         {
             IEnumerable<AssetNodeViewModel> assetsVm;
             IEnumerable<ServiceEdgeViewModel> servicesVm;
