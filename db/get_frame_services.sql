@@ -1,11 +1,11 @@
-﻿DROP FUNCTION public.get_frame_services(
+﻿DROP FUNCTION IF EXISTS public.get_frame_services(
     _service_layer_id integer,
     x1 double precision,
     y1 double precision,
     x2 double precision,
     y2 double precision);
 
-DROP TYPE serviceVM;
+DROP TYPE IF EXISTS serviceVM;
 
 CREATE TYPE serviceVM as (
   service_id integer,

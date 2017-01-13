@@ -1,11 +1,11 @@
-﻿DROP FUNCTION public.get_frame_assets(
+﻿DROP FUNCTION IF EXISTS public.get_frame_assets(
     _service_layer_id integer,
     x1 double precision,
     y1 double precision,
     x2 double precision,
     y2 double precision);
 
-DROP TYPE assetVM;
+DROP TYPE IF EXISTS assetVM;
 
 CREATE TYPE assetVM as (
   asset_id integer,
