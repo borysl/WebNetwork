@@ -7,6 +7,7 @@
  * the screen, since the graph is given directly to the constructor.
  */
 
+var POSTPONE_REFRESH_INTERVAL = 100;
 // Instantiate sigma:
 var sig = new sigma({
     renderer: {
@@ -60,7 +61,14 @@ $(function () {
 var txtFilter = document.getElementById("txtFilter");
 var btnMagic = document.getElementById("btnMagic");
 
-function fitToBorders(e) {
+var refreshIntervalFitToBorders;
+
+function postponedFitToBorders() {
+    if (refreshIntervalFitToBorders) clearInterval(refreshIntervalFitToBorders);
+    refreshIntervalFitToBorders = setInterval(fitToBorders, POSTPONE_REFRESH_INTERVAL);
+}
+
+function fitToBorders() {
     // calculate boundaries:
     var shiftX = sig.renderers[0].width / 2 * cam.ratio;
     var shiftY = sig.renderers[0].height / 2 * cam.ratio;
@@ -69,7 +77,7 @@ function fitToBorders(e) {
     loadGraph(txtFilter.value);
 }
 
-cam.bind('coordinatesUpdated', fitToBorders);
+cam.bind('coordinatesUpdated', postponedFitToBorders);
 
 btnMagic.onclick = function (e) {
     sigma.misc.animation.camera(
