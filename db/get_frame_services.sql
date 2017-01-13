@@ -25,8 +25,8 @@ CREATE OR REPLACE FUNCTION public.get_frame_services(
 select _.service_id, _.name,_.input_asset_id, _.output_asset_id from ntw_service as _
 LEFT JOIN ntw_asset_position AS n1 ON n1.asset_id = _.input_asset_id
 LEFT JOIN ntw_asset_position AS n2 ON n2.asset_id = _.output_asset_id
-where n1.x between x1 and x2 and n1.y between y1 and y2
-and n2.x between x1 and x2 and n2.y between y1 and y2
+where (n1.x between x1 and x2 and n1.y between y1 and y2
+or n2.x between x1 and x2 and n2.y between y1 and y2)
 and _.service_layer_id = _service_layer_id
 order by _.service_id;
 '
@@ -36,6 +36,5 @@ ALTER FUNCTION public.get_frame_services(integer, double precision, double preci
   OWNER TO nms5000;
 COMMENT ON FUNCTION public.get_frame_services(integer, double precision, double precision, double precision, double precision) IS 'Getting services from the frame (x1,y1,x2,y2) and service layer with id service_layer_id';
 
-select * from public.get_frame_services(1,400,400,800,800);
-
+select * from public.get_frame_services(1,400,400,500,500);
 select * from public.get_frame_services(1)

@@ -7,7 +7,7 @@
  * the screen, since the graph is given directly to the constructor.
  */
 
-var POSTPONE_REFRESH_INTERVAL = 100;
+var POSTPONE_REFRESH_INTERVAL = 50;
 // Instantiate sigma:
 var sig = new sigma({
     renderer: {
@@ -48,6 +48,7 @@ function loadGraph(suffix)
         sig.graph.read(data);
 
         sig.refresh(/*{ skipIndexation: true }*/);
+        console.log("Request ended");
     }
 
     function errorFunc(ex) {
@@ -61,17 +62,21 @@ $(function () {
 var txtFilter = document.getElementById("txtFilter");
 var btnMagic = document.getElementById("btnMagic");
 
-var refreshIntervalFitToBorders;
+var refreshTimeoutFitToBorders;
 
 function postponedFitToBorders() {
-    if (refreshIntervalFitToBorders) clearInterval(refreshIntervalFitToBorders);
-    refreshIntervalFitToBorders = setInterval(fitToBorders, POSTPONE_REFRESH_INTERVAL);
+    console.log("Request started");
+    if (refreshTimeoutFitToBorders) {
+        clearTimeout(refreshTimeoutFitToBorders);
+        console.log("Request canceled");
+    }
+    refreshTimeoutFitToBorders = setTimeout(fitToBorders, POSTPONE_REFRESH_INTERVAL);
 }
 
 function fitToBorders() {
     // calculate boundaries:
-    var shiftX = sig.renderers[0].width / 2 * cam.ratio;
-    var shiftY = sig.renderers[0].height / 2 * cam.ratio;
+    var shiftX = sig.renderers[0].width / 2 * cam.ratio * 2;
+    var shiftY = sig.renderers[0].height / 2 * cam.ratio * 2;
     var getBoundaries = `/${cam.x - shiftX}:${cam.y - shiftY}x${cam.x + shiftX}:${cam.y + shiftY}`;
     txtFilter.value = getBoundaries;
     loadGraph(txtFilter.value);
@@ -93,25 +98,3 @@ btnMagic.onclick = function (e) {
 
     //cam.goTo({ x: 400, y: 400, ratio: 3});*/
 };
-
-var dom = document.querySelector('#graph-container canvas:last-child');
-
-/**
-     * EVENTS BINDING:
-     * ***************
-     */
-dom.addEventListener('click',function(e) {
-    var x,
-        y,
-        p;
-
-        x = sigma.utils.getX(e);
-        y = sigma.utils.getY(e);
-
-        console.log(x, y);
-        p = cam.cameraPosition(x, y);
-        x = p.x;
-        y = p.y;
-
-        console.log(x, y);
-    });
