@@ -54,20 +54,22 @@ function loadGraph(suffix)
     }
 }
 $(function () {
-    loadGraph(txtFilter.value);
+    fitToBorders();
 });
 
-var btnReload = document.getElementById("btnReload");
 var txtFilter = document.getElementById("txtFilter");
 var btnMagic = document.getElementById("btnMagic");
 
-btnReload.onclick = function (e) {
+function fitToBorders(e) {
+    // calculate boundaries:
+    var shiftX = sig.renderers[0].width / 2 * cam.ratio;
+    var shiftY = sig.renderers[0].height / 2 * cam.ratio;
+    var getBoundaries = `/${cam.x - shiftX}:${cam.y - shiftY}x${cam.x + shiftX}:${cam.y + shiftY}`;
+    txtFilter.value = getBoundaries;
     loadGraph(txtFilter.value);
-};
+}
 
-cam.bind('coordinatesUpdated', function(e) {
-    // console.log(cam.x, cam.y);
-});
+cam.bind('coordinatesUpdated', fitToBorders);
 
 btnMagic.onclick = function (e) {
     sigma.misc.animation.camera(
@@ -84,8 +86,6 @@ btnMagic.onclick = function (e) {
     //cam.goTo({ x: 400, y: 400, ratio: 3});*/
 };
 
-
-
 var dom = document.querySelector('#graph-container canvas:last-child');
 
 /**
@@ -96,7 +96,6 @@ dom.addEventListener('click',function(e) {
     var x,
         y,
         p;
-
 
         x = sigma.utils.getX(e);
         y = sigma.utils.getY(e);
